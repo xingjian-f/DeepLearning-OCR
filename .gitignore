@@ -1,0 +1,6 @@
+*.pyc
+train_data/
+test_data/
+save_model/
+nohup.out
+gunicorn.log
