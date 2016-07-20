@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template, make_response
-from captcha import guangdong, predict
+from captcha import guangdong, predict, jiangsu
 
 app = Flask(__name__)
 guangdong_model = guangdong()
+jiangsu_model = jiangsu()
 @app.route('/', methods=['GET', 'POST'])
 def index():
 	global guangdong_model	
@@ -12,6 +13,8 @@ def index():
 		province = request.form['province']
 		if province == 'guangdong':
 			res = predict(guangdong_model, imgs)
+		elif province == 'jiangsu':
+			res = predict(jiangsu_model, imgs)
 		elif province == 'nacao':
 			res = 'pass'
 		else:

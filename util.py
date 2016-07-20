@@ -6,14 +6,18 @@ from PIL import Image
 import matplotlib.pyplot as plt 
 import keras.backend as K
 
-def one_hot_encoder(data, whole_set):
+
+@profile
+def one_hot_encoder(data, whole_set, char2idx):
 	"""
 	 对整个list做encoder，而不是单个record
 	"""
 	ret = []
 	for i in data:
-		idx = whole_set.index(i)
-		ret.append([1 if j==idx else 0 for j in range(len(whole_set))])
+		idx = char2idx[i]
+		tmp = np.zeros(len(whole_set))
+		tmp[idx] = 1
+		ret.append(tmp)
 	return ret
 
 
@@ -23,6 +27,8 @@ def one_hot_decoder(data, whole_set):
 		idx = np.argmax(probs)
 		if whole_set[idx] != 'empty':
 			ret.append(whole_set[idx])
+		else:
+			break
 	ret = ''.join(ret)
 	return ret
 
@@ -37,7 +43,8 @@ def plot_loss_figure(history, save_path):
 	plt.savefig(save_path)
 
 
-def load_data(input_dir, max_nb_cha, width, height, channels, cha_set):
+@profile
+def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx):
 	"""
 	文件夹的规范：
 	所有图片文件，命名方式为id.jpg，id从1开始
@@ -51,11 +58,14 @@ def load_data(input_dir, max_nb_cha, width, height, channels, cha_set):
 
 	for dirpath, dirnames, filenames in os.walk(input_dir):
 		nb_pic = len(filenames)-1
+		if nb_pic <= 0:
+			continue
 		for i in range(1, nb_pic+1):
 			filename = str(i) + '.jpg'
 			filepath = dirpath + os.sep + filename
 			pixels = load_img(filepath, width, height, channels)
 			x.append(pixels)
+			# print sys.getsizeof(x), i
 		
 		label_path = dirpath + os.sep + 'label.txt'
 		with open(label_path) as f:
@@ -72,9 +82,8 @@ def load_data(input_dir, max_nb_cha, width, height, channels, cha_set):
 
 	# 转成keras能接受的数据形式，以及做one hot 编码
 	x = np.array(x)
-	x = x.astype('float32') # gpu只接受32位浮点运算
 	x /= 255 # normalized
-	y = [one_hot_encoder(i, cha_set) for i in y]
+	y = [one_hot_encoder(i, char_set, char2idx) for i in y]
 	y = np.array(y)
 
 	print 'Data loaded, spend time(m) :', (time.time()-tag)/60
@@ -83,13 +92,13 @@ def load_data(input_dir, max_nb_cha, width, height, channels, cha_set):
 
 def load_img(path, width, height, channels):
 	img = Image.open(path)
-	im = img.resize((width, height)) # resize is necessary if not using FCN
-	pixels = list(im.getdata())
+	img = img.resize((width, height)) # resize is necessary if not using FCN
+	img = np.asarray(img, dtype='float32')
 	if channels > 1:
-		x = [[[pixels[k*width+i][j] for k in range(height)] for i in range(width)] for j in range(channels)] # 转成（channel，width，height）shape
+		img = np.rollaxis(img, 2, 0)
 	else:
-		x = [[[pixels[k*width+i] for k in range(height)] for i in range(width)]]
-	return x
+		img = [[[img[k*width+i] for k in range(height)] for i in range(width)]] # TODO
+	return img
 
 
 def get_char_set(file_dir):
@@ -100,7 +109,9 @@ def get_char_set(file_dir):
 			raw = raw.decode('utf-8').strip('\r\n')
 			for i in raw:
 				ret.add(i)
-	return ret
+	char_set = list(ret)
+	char2idx = dict(zip(char_set, range(len(char_set))))
+	return char_set, char2idx
 
 
 def get_maxnb_char(file_dir):
@@ -116,3 +127,20 @@ def get_maxnb_char(file_dir):
 def categorical_accuracy_per_sequence(y_true, y_pred):
 	return K.mean(K.min(K.equal(K.argmax(y_true, axis=-1),
 				  K.argmax(y_pred, axis=-1)), axis=-1))
+
+
+def get_sample_weight(label, whole_set):
+	ret = []
+	for i in label:
+		ret.append([])
+		tag = False
+		for j in i:
+			cha = whole_set[np.argmax(j)]
+			weight = 0
+			if cha == 'empty' and tag == False:
+				weight = 1
+				tag = True 
+			if cha != 'empty':
+				weight = 1
+			ret[-1].append(weight)
+	return np.array(ret)

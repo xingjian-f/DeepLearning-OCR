@@ -16,7 +16,20 @@ class guangdong():
         self.img_channels = 3
         self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/guangdong/'
         self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-15/weights.499-0.07.hdf5'
-        self.char_set = list(get_char_set(self.train_data_dir))
+        self.char_set = get_char_set(self.train_data_dir)
+        self.nb_classes = len(self.char_set)
+        self.max_nb_char = get_maxnb_char(self.train_data_dir)
+        self.model = build_CNN_LSTM(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
+        self.model.load_weights(self.weights_file_path) # 读取训练好的模型
+
+class jiangsu():
+    def __init__(self):
+        self.img_width = 150
+        self.img_height = 60
+        self.img_channels = 3
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/jiangsu/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-18/weights.55-0.06.hdf5'
+        self.char_set = get_char_set(self.train_data_dir)
         self.nb_classes = len(self.char_set)
         self.max_nb_char = get_maxnb_char(self.train_data_dir)
         self.model = build_CNN_LSTM(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
@@ -28,7 +41,6 @@ def load_data(img_vals, width, height, channels):
     for img_val in img_vals:
        x.append(load_img(img_val, width, height, channels))
     x = np.array(x)
-    x = x.astype('float32') # gpu只接受32位浮点运算
     x /= 255 # normalized
     return x
 
