@@ -1,24 +1,23 @@
-#coding:utf-8
 import time
 import os
+import gc
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt 
 import keras.backend as K
 
 
-@profile
 def one_hot_encoder(data, whole_set, char2idx):
 	"""
-	 对整个list做encoder，而不是单个record
+	Encode the whole list, not a single record
 	"""
 	ret = []
 	for i in data:
 		idx = char2idx[i]
-		tmp = np.zeros(len(whole_set))
+		tmp = np.zeros(len(whole_set), dtype=np.int8)
 		tmp[idx] = 1
 		ret.append(tmp)
-	return ret
+	return np.asarray(ret)
 
 
 def one_hot_decoder(data, whole_set):
@@ -42,14 +41,12 @@ def plot_loss_figure(history, save_path):
 	plt.title('loss figure')
 	plt.savefig(save_path)
 
-
 @profile
 def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx):
 	"""
-	文件夹的规范：
-	所有图片文件，命名方式为id.jpg，id从1开始
-	标签文件label.txt，第1行对应1.jpg的标签，文件必须用utf-8编码
-	# y[0][0],y[0][1],y[0][2],y[0][3] 分别对应第1,2,3,4个字符类推
+	The format of the file folder
+	All image file, named as 'id.jpg', id starts from 1
+	label.txt, the first row correspond to 1.jpg's label, the file should be encoded in utf-8
 	"""
 	print 'Loading data...'
 	tag = time.time()
@@ -65,7 +62,6 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 			filepath = dirpath + os.sep + filename
 			pixels = load_img(filepath, width, height, channels)
 			x.append(pixels)
-			# print sys.getsizeof(x), i
 		
 		label_path = dirpath + os.sep + 'label.txt'
 		with open(label_path) as f:
@@ -80,11 +76,11 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 					else:
 						y[-1].append('empty')
 
-	# 转成keras能接受的数据形式，以及做one hot 编码
-	x = np.array(x)
+	# transform to keras format, and do one hot encoding
+	x = np.asarray(x)
 	x /= 255 # normalized
 	y = [one_hot_encoder(i, char_set, char2idx) for i in y]
-	y = np.array(y)
+	y = np.asarray(y)
 
 	print 'Data loaded, spend time(m) :', (time.time()-tag)/60
 	return [x, y]
@@ -93,11 +89,13 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 def load_img(path, width, height, channels):
 	img = Image.open(path)
 	img = img.resize((width, height)) # resize is necessary if not using FCN
+	if channels==1: # convert the image to gray scale image if it's RGB
+		img = img.convert('L')
 	img = np.asarray(img, dtype='float32')
 	if channels > 1:
 		img = np.rollaxis(img, 2, 0)
 	else:
-		img = [[[img[k*width+i] for k in range(height)] for i in range(width)]] # TODO
+		img = np.expand_dims(img, 0)
 	return img
 
 
