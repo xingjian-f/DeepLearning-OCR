@@ -41,7 +41,7 @@ def plot_loss_figure(history, save_path):
 	plt.title('loss figure')
 	plt.savefig(save_path)
 
-@profile
+# @profile
 def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx):
 	"""
 	The format of the file folder
@@ -136,7 +136,7 @@ def get_sample_weight(label, whole_set):
 			cha = whole_set[np.argmax(j)]
 			weight = 0
 			if cha == 'empty' and tag == False:
-				weight = 1
+				weight = 100
 				tag = True 
 			if cha != 'empty':
 				weight = 1
