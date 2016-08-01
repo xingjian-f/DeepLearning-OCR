@@ -5,36 +5,25 @@ import json
 import numpy as np 
 from PIL import Image
 from architecture.CNN_LSTM import build_CNN_LSTM
-from architecture.CNN_LSTM_old import build_CNN_LSTM_old
+from architecture.cv_vgg import build_vgg
 from util import load_img, get_char_set, get_maxnb_char
+from post_correction import get_label_set
 from train import pred
 
-
-class guangdong():
+class zhejiang():
     def __init__(self):
-        self.img_width = 223
+        self.img_width = 250
         self.img_height = 50
-        self.img_channels = 3
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/guangdong/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-15/weights.499-0.07.hdf5'
+        self.img_channels = 1
+        self.multiple = True
+        self.post_correction = True
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/zhejiang/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-31/weights.212-0.16.hdf5'
         self.char_set = get_char_set(self.train_data_dir)[0]
         self.nb_classes = len(self.char_set)
         self.max_nb_char = get_maxnb_char(self.train_data_dir)
-        self.model = build_CNN_LSTM_old(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
-        self.model.load_weights(self.weights_file_path) # 读取训练好的模型
-
-
-class jiangsu():
-    def __init__(self):
-        self.img_width = 150
-        self.img_height = 60
-        self.img_channels = 3
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/jiangsu/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-18/weights.55-0.06.hdf5'
-        self.char_set = get_char_set(self.train_data_dir)[0]
-        self.nb_classes = len(self.char_set)
-        self.max_nb_char = get_maxnb_char(self.train_data_dir)
-        self.model = build_CNN_LSTM_old(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
+        self.label_set = get_label_set(self.train_data_dir)
+        self.model = build_vgg(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型
 
 
@@ -43,11 +32,14 @@ class beijing():
         self.img_width = 150
         self.img_height = 50
         self.img_channels = 3
+        self.multiple = False
+        self.post_correction = False
         self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/beijing/'
         self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-22/weights.66-0.00.hdf5'
         self.char_set = get_char_set(self.train_data_dir)[0]
         self.nb_classes = len(self.char_set)
         self.max_nb_char = get_maxnb_char(self.train_data_dir)
+        self.label_set = get_label_set(self.train_data_dir)
         self.model = build_CNN_LSTM(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型
 
@@ -93,13 +85,16 @@ def predict(predictor, post_vals):
     img_width = predictor.img_width
     img_height = predictor.img_height
     img_channels = predictor.img_channels
+    multiple = predictor.multiple
+    post_correction = predictor.post_correction
     model = predictor.model
     char_set = predictor.char_set
+    label_set = predictor.label_set
     # predict result
     keys = post_vals.keys()
     img_vals = post_vals.values()
     X_test = load_data(img_vals, img_width, img_height, img_channels)
-    predictions = pred(model, X_test, char_set)
+    predictions = pred(model, X_test, char_set, label_set, multiple, post_correction)
     # format reply
     res = {}
     for i, expr in enumerate(predictions):
@@ -112,4 +107,4 @@ def predict(predictor, post_vals):
     if len(res) == 1: # in case input data is not in batch form 
         res = res['file']
     # print res, len(res)
-    return json.dumps(res, ensure_ascii=False)
+    return json.dumps(res, ensure_ascii=False) # utf-8 output

@@ -44,15 +44,15 @@ def build_cv_cnn_lstm(channels, width, height, lstm_output_size, nb_classes):
 	model.add(BatchNormalization())
 	model.add(Dropout(0.5))
 	# 2 dense
-	model.add(Dense(512, activation='relu'))
+	model.add(Dense(1024, activation='relu'))
 	model.add(BatchNormalization())
 	model.add(Dropout(0.5))
 	# lstm
 	model.add(RepeatVector(lstm_output_size))
-	model.add(LSTM(512, return_sequences=True))
+	model.add(LSTM(1024, return_sequences=True))
 	model.add(TimeDistributed(Dropout(0.5)))
 	model.add(TimeDistributed(Dense(nb_classes, activation='softmax')))
-	# model.summary()
+	model.summary()
 	model.compile(loss='categorical_crossentropy',
 				  optimizer='adam',
 				  metrics=[categorical_accuracy_per_sequence],

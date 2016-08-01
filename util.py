@@ -24,12 +24,16 @@ def one_hot_decoder(data, whole_set):
 	ret = []
 	for probs in data:
 		idx = np.argmax(probs)
-		if whole_set[idx] != 'empty':
-			ret.append(whole_set[idx])
-		else:
-			break
-	ret = ''.join(ret)
+		ret.append(whole_set[idx])
 	return ret
+
+
+def list2str(data):
+	return ''.join([i if i != 'empty' else '' for i in data])
+
+
+def sin2mul(data):
+	return [[data[j][i] for j in range(len(data))] for i in range(len(data[0]))]
 
 
 def plot_loss_figure(history, save_path):
@@ -42,7 +46,7 @@ def plot_loss_figure(history, save_path):
 	plt.savefig(save_path)
 
 # @profile
-def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx):
+def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx, multiple):
 	"""
 	The format of the file folder
 	All image file, named as 'id.jpg', id starts from 1
@@ -81,7 +85,12 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 	x /= 255 # normalized
 	y = [one_hot_encoder(i, char_set, char2idx) for i in y]
 	y = np.asarray(y)
-
+	# multiple output format
+	if multiple: 
+		new_y = []
+		for i in range(y.shape[1]):
+			new_y.append(y[:,i,:])
+		y = new_y
 	print 'Data loaded, spend time(m) :', (time.time()-tag)/60
 	return [x, y]
 
@@ -127,7 +136,7 @@ def categorical_accuracy_per_sequence(y_true, y_pred):
 				  K.argmax(y_pred, axis=-1)), axis=-1))
 
 
-def get_sample_weight(label, whole_set):
+def get_sample_weight(label, whole_set, multiple):
 	ret = []
 	for i in label:
 		ret.append([])
@@ -136,9 +145,17 @@ def get_sample_weight(label, whole_set):
 			cha = whole_set[np.argmax(j)]
 			weight = 0
 			if cha == 'empty' and tag == False:
-				weight = 100
+				weight = 1
 				tag = True 
 			if cha != 'empty':
 				weight = 1
 			ret[-1].append(weight)
-	return np.array(ret)
+	ret = np.asarray(ret)
+	# Attention!!! multiple output format
+	if multiple:
+		new_ret = []
+		for i in range(ret.shape[0]):
+			new_ret.append(ret[i,:].tolist()) # TODO
+		ret = new_ret
+	# ===================================
+	return ret

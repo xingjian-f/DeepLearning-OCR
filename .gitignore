@@ -1,4 +1,5 @@
 *.pyc
+*.lprof
 train_data/
 test_data/
 save_model/
