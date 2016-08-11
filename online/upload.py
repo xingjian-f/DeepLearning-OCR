@@ -1,29 +1,28 @@
 from flask import Flask, request, render_template, make_response
-from captcha import predict, beijing, zhejiang
+from captcha import predict, beijing, guangdong, jiangsu, hubei
 
 app = Flask(__name__)
-# guangdong_model = guangdong()
-# jiangsu_model = jiangsu()
+guangdong_model = guangdong()
 beijing_model = beijing()
-zhejiang_model = zhejiang()
+jiangsu_model = jiangsu()
+hubei_model = hubei()
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
-	global guangdong_model, jiangsu_model, beijing_model, zhejiang_model	
+	global guangdong_model, beijing_model	
 	if request.method == 'POST':
 		imgs = request.files.to_dict()
 		province = request.form['province']
 		if province == 'guangdong':
-			# res = predict(guangdong_model, imgs)
-			res = 'not ready'
+			res = predict(guangdong_model, imgs)
 		elif province == 'jiangsu':
-			# res = predict(jiangsu_model, imgs)
-			res = 'not ready'
+			res = predict(jiangsu_model, imgs)
 		elif province == 'nacao':
 			res = 'Please use port:5002'
 		elif province == 'beijing':
 			res = predict(beijing_model, imgs)
-		elif province == 'zhejaing':
-			res = predict(zhejiang_model, imgs)
+		elif province == 'hubei':
+			res = predict(hubei_model, imgs)
 		else:
 			res = 'No such province haha!'
 		return res

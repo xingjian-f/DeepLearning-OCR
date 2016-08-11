@@ -41,7 +41,8 @@ def build_CNN_LSTM(channels, width, height, lstm_output_size, nb_classes):
 	model.summary()
 	model.compile(loss='categorical_crossentropy',
 				  optimizer='adam',
-				  metrics=[categorical_accuracy_per_sequence]
+				  metrics=[categorical_accuracy_per_sequence],
+				  sample_weight_mode='temporal'
 				  )
 
 	return model

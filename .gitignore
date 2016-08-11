@@ -3,5 +3,7 @@
 train_data/
 test_data/
 save_model/
+gen_data/TXT/
+gen_data/fonts/
 nohup.out
 gunicorn.log

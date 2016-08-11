@@ -9,9 +9,9 @@ def randRGB():
 
 
 def captcha_draw(label, fonts, dir_path):
-    width, height = 768, 32
-    size_cha = random.randint(24, 32) # 字符大小
-    derx = random.randint(0, 10)
+    width, height = 80, 12
+    size_cha = random.randint(10, 12) # 字符大小
+    derx = random.randint(0, 1)
     im = Image.new(mode='L', size=(width, height), color='white') # color 背景颜色，size 图片大小
     drawer = ImageDraw.Draw(im)
     font = ImageFont.truetype(random.choice(fonts), size_cha)
@@ -40,19 +40,9 @@ def write2file(dir_path, label, im):
 if __name__ == "__main__":
     font_dir = 'fonts/'
     font_paths = map(lambda x: font_dir+x, os.listdir(font_dir))
-    label_dir = 'TXT/'
-    names = os.listdir(label_dir)
-    max_len = 20
-    cnt = 50000
-    idx = 0
-    for name in names:
-        txt_path = label_dir+name 
-        with open(txt_path) as f:
-            for raw in f:
-                raw = raw.decode('utf-8')
-                if len(raw) <= 20:
-                    captcha_draw(raw, font_paths, 'cv_data_%d/'%idx)
-                    cnt -= 1
-        if cnt < 0:
-            cnt = 50000
-            idx += 1
+    cnt = 100
+    while cnt > 0:
+        label = []
+        for i in range(11):
+            label.append(random.randint(0,10))
+        captcha_draw(label, font_paths, 'tmp/')

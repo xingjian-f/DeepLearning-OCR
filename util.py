@@ -1,6 +1,5 @@
 import time
 import os
-import gc
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt 
@@ -45,7 +44,6 @@ def plot_loss_figure(history, save_path):
 	plt.title('loss figure')
 	plt.savefig(save_path)
 
-# @profile
 def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx, multiple):
 	"""
 	The format of the file folder
@@ -75,7 +73,7 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 					break
 				y.append([])
 				for i in range(max_nb_cha):
-					if i < len(raw):
+					if i < len(raw): # make sure there isn't empty label
 						y[-1].append(raw[i])
 					else:
 						y[-1].append('empty')

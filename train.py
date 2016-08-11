@@ -6,8 +6,9 @@ from keras.callbacks import ModelCheckpoint
 from util import one_hot_decoder, plot_loss_figure, load_data, get_char_set, get_maxnb_char
 from util import get_sample_weight, list2str, sin2mul
 from post_correction import get_label_set, correction
-# from architecture.CNN_LSTM import build_CNN_LSTM
+from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.cv_vgg import build_vgg
+from architecture.vgg import build_vgg_10
 
 # @profile
 def pred(model, X, char_set, label_set, multiple, post_correction):
@@ -46,7 +47,6 @@ def test(model, test_data, char_set, label_set, multiple, post_correction):
 def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple):
 	X_train, y_train = train_data[0], train_data[1]
 	sample_weight = get_sample_weight(y_train, char_set, multiple)
-	print type(sample_weight)
 	print 'X_train shape:', X_train.shape
 	print X_train.shape[0], 'train samples'
 	if os.path.exists(save_dir) == False:
@@ -68,18 +68,18 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set,
 
 
 def main():
-	img_width, img_height = 250, 50
+	img_width, img_height = 150, 40
 	img_channels = 1 
 	batch_size = 32
 	nb_epoch = 500
-	multiple = True
-	post_correction = True
+	multiple = False
+	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/zhejiang/'
-	val_data_dir = 'test_data/nacao_5/'
-	test_data_dir = 'test_data/cv/'
-	weights_file_path = 'save_model/2016-07-31/weights.212-0.16.hdf5'
+	train_data_dir = 'train_data/hubei/'
+	val_data_dir = 'test_data/phone_number_ori/'
+	test_data_dir = 'test_data/phone_number_ori/'
+	weights_file_path = 'save_model/2016-08-11/weights.32-0.00.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -87,13 +87,14 @@ def main():
 	# print 'char_set:', char_set
 	print 'nb_classes:', nb_classes
 	print 'max_nb_char:', max_nb_char
-	model = build_vgg(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
+	print 'size_label_set:', len(label_set)
+	model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
 	model.load_weights(weights_file_path) # load trained model
 
-	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
+	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx, multiple)
 	val_data = None
 	train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx, multiple) 
-	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
+	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx, multiple)
 	test(model, train_data, char_set, label_set, multiple, post_correction)
