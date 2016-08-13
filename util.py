@@ -35,6 +35,13 @@ def sin2mul(data):
 	return [[data[j][i] for j in range(len(data))] for i in range(len(data[0]))]
 
 
+def mul2sin(y):
+	new_y = []
+	for i in range(y.shape[1]):
+		new_y.append(y[:,i,:])
+	return new_y
+
+
 def plot_loss_figure(history, save_path):
 	train_loss = history.history['loss']
 	val_loss = history.history['val_loss']
@@ -44,7 +51,7 @@ def plot_loss_figure(history, save_path):
 	plt.title('loss figure')
 	plt.savefig(save_path)
 
-def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx, multiple):
+def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx):
 	"""
 	The format of the file folder
 	All image file, named as 'id.jpg', id starts from 1
@@ -83,12 +90,6 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 	x /= 255 # normalized
 	y = [one_hot_encoder(i, char_set, char2idx) for i in y]
 	y = np.asarray(y)
-	# multiple output format
-	if multiple: 
-		new_y = []
-		for i in range(y.shape[1]):
-			new_y.append(y[:,i,:])
-		y = new_y
 	print 'Data loaded, spend time(m) :', (time.time()-tag)/60
 	return [x, y]
 
@@ -151,9 +152,11 @@ def get_sample_weight(label, whole_set, multiple):
 	ret = np.asarray(ret)
 	# Attention!!! multiple output format
 	if multiple:
-		new_ret = []
-		for i in range(ret.shape[0]):
-			new_ret.append(ret[i,:].tolist()) # TODO
+		new_ret = {}
+		for i in range(ret.shape[1]):
+			new_ret['dense_%d'%(3+i)] = ret[:,i] # Attention, 3 is corespond to the model architecture 
+		# new_ret['dense_3'] = ret[0, :]
 		ret = new_ret
+		print ret['dense_3'].shape, len(ret)
 	# ===================================
 	return ret
