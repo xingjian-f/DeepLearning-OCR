@@ -14,9 +14,6 @@ from architecture.vgg import build_vgg_10
 def pred(model, X, char_set, label_set, multiple, post_correction):
 	pred_res = model.predict(X)
 	pred_res = [one_hot_decoder(i, char_set) for i in pred_res]
-	# multiple output format
-	if multiple:
-		pred_res = sin2mul(pred_res)
 	pred_res = [list2str(i) for i in pred_res]
 	# post correction
 	if post_correction:
@@ -70,18 +67,18 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set,
 
 
 def main():
-	img_width, img_height = 48, 48
-	img_channels = 1 
+	img_width, img_height = 150, 50
+	img_channels = 3 
 	batch_size = 32
 	nb_epoch = 500
-	multiple = True
+	multiple = False
 	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/chinese_100000/'
-	val_data_dir = 'test_data/chinese_10000/'
+	train_data_dir = 'train_data/beijing/'
+	val_data_dir = 'test_data/chinese_50000/'
 	test_data_dir = 'test_data/phone_number_ori/'
-	weights_file_path = 'save_model/2016-08-12/weights.198-0.04.hdf5'
+	weights_file_path = 'save_model/2016-07-22/weights.66-0.00.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -90,13 +87,13 @@ def main():
 	print 'nb_classes:', nb_classes
 	print 'max_nb_char:', max_nb_char
 	print 'size_label_set:', len(label_set)
-	model = build_vgg(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
-	# model.load_weights(weights_file_path) # load trained model
+	model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
+	model.load_weights(weights_file_path) # load trained model
 
-	val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	# val_data = None
+	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
+	val_data = None
 	train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx) 
-	train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple)
+	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	test(model, train_data, char_set, label_set, multiple, post_correction)

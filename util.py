@@ -21,6 +21,8 @@ def one_hot_encoder(data, whole_set, char2idx):
 
 def one_hot_decoder(data, whole_set):
 	ret = []
+	if data.ndim == 1: # keras bug ?
+		data = np.expand_dims(data, 0)
 	for probs in data:
 		idx = np.argmax(probs)
 		ret.append(whole_set[idx])
@@ -96,7 +98,7 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 
 def load_img(path, width, height, channels):
 	img = Image.open(path)
-	img = img.resize((width, height)) # resize is necessary if not using FCN
+	img = img.resize((width, height))
 	if channels==1: # convert the image to gray scale image if it's RGB
 		img = img.convert('L')
 	img = np.asarray(img, dtype='float32')

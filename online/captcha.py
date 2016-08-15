@@ -6,8 +6,8 @@ import numpy as np
 from PIL import Image
 from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.cv_vgg import build_vgg
-from util import load_img, get_char_set, get_maxnb_char
-from post_correction import get_label_set
+from util import load_img, get_char_set, get_maxnb_char, one_hot_decoder, list2str
+from post_correction import get_label_set, correction
 from train import pred
 
 
@@ -17,6 +17,62 @@ class model(object):
         self.nb_classes = len(self.char_set)
         self.max_nb_char = get_maxnb_char(self.train_data_dir)
         self.label_set = get_label_set(self.train_data_dir)
+
+
+    def _load_data_file(self, img_vals):
+        if type(img_vals) != list:
+            img_vals = [img_vals]
+        x = []
+        for img_val in img_vals:
+           x.append(load_img(img_val, self.img_width, self.img_height, self.img_channels))
+        x = np.asarray(x)
+        x /= 255 # normalized
+        return x
+
+
+    def _load_data_numpy(self, x):
+        # # x shape = (width, height)
+        # from scipy.misc import imresize
+        # print x.dtype, x.shape, 'ori'
+        # # x = np.asarray(x, dtype='float32')
+        # # print x.dtype
+        # x = imresize(x, (48, 48))
+        # x = np.asarray(x, dtype='float32')
+        # x /= 255
+        # # x = np.swapaxes(x, 0, 1)
+        # print x.dtype, x.shape, 'resize'
+        # for i in x[:5]:
+        #     print i
+        # x = np.expand_dims(x, 0)
+        # x = np.expand_dims(x, 0)
+        # print x.dtype, x.shape, 'expand'
+        # # x /= 255.0
+        # # for i in x[0][0]:
+        # #     print i
+        # return x
+        x = np.asarray(x, dtype='float32')
+        x /= 255
+        x = np.expand_dims(x, 0)
+        x = np.expand_dims(x, 0)
+        return x
+
+
+    def pred(self, img_vals):
+        # if type(img_vals) == list:
+        # print img_vals, 'img_vals'
+        X = self._load_data_file(img_vals)
+        # else:
+        #     X = self._load_data_numpy(img_vals)
+        # print X.shape
+        # print X[:,:,20:30, 20:30]
+        pred_res = self.model.predict(X)
+        pred_res = [one_hot_decoder(i, self.char_set) for i in pred_res]
+        pred_res = [list2str(i) for i in pred_res]
+        # post correction
+        if self.post_correction:
+            pred_res = correction(pred_res, self.label_set)
+        # print pred_res[0]
+        return pred_res
 
 
 class vgg(model):
@@ -33,6 +89,17 @@ class cnn_lstm(model):
         self.multiple = False
         self.model = build_CNN_LSTM(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型
+
+
+class chi_single(vgg):
+    def __init__(self):
+        self.img_width = 48
+        self.img_height = 48
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chinese_200000/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-15/weights.07-0.32.hdf5'
+        vgg.__init__(self)
 
 
 class jiangsu(cnn_lstm):
@@ -79,15 +146,6 @@ class hubei(cnn_lstm):
         cnn_lstm.__init__(self)  
 
 
-def load_data(img_vals, width, height, channels):
-    x = []
-    for img_val in img_vals:
-       x.append(load_img(img_val, width, height, channels))
-    x = np.asarray(x)
-    x /= 255 # normalized
-    return x
-
-
 def parse_expr(expr):
     if expr[-2:] == u'等于':
         rep_dict = [
@@ -116,20 +174,10 @@ def parse_expr(expr):
 
 
 def predict(predictor, post_vals):
-    # load model parameter
-    img_width = predictor.img_width
-    img_height = predictor.img_height
-    img_channels = predictor.img_channels
-    multiple = predictor.multiple
-    post_correction = predictor.post_correction
-    model = predictor.model
-    char_set = predictor.char_set
-    label_set = predictor.label_set
     # predict result
     keys = post_vals.keys()
     img_vals = post_vals.values()
-    X_test = load_data(img_vals, img_width, img_height, img_channels)
-    predictions = pred(model, X_test, char_set, label_set, multiple, post_correction)
+    predictions = predictor.pred(img_vals)
     # format reply
     res = {}
     for i, expr in enumerate(predictions):
