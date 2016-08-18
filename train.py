@@ -1,17 +1,16 @@
 import os
 import time
 from datetime import datetime
-from keras.optimizers import SGD
 from keras.callbacks import ModelCheckpoint
 from util import one_hot_decoder, plot_loss_figure, load_data, get_char_set, get_maxnb_char
-from util import get_sample_weight, list2str, sin2mul, mul2sin
+from util import get_sample_weight, list2str, mul2sin
 from post_correction import get_label_set, correction
 from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.cv_vgg import build_vgg
-from architecture.vgg import build_vgg_10
+from architecture.vgg_merge import build_vgg_merge
 
 # @profile
-def pred(model, X, char_set, label_set, multiple, post_correction):
+def pred(model, X, char_set, label_set, post_correction):
 	pred_res = model.predict(X)
 	pred_res = [one_hot_decoder(i, char_set) for i in pred_res]
 	pred_res = [list2str(i) for i in pred_res]
@@ -21,11 +20,11 @@ def pred(model, X, char_set, label_set, multiple, post_correction):
 	return pred_res
 
 # @profile
-def test(model, test_data, char_set, label_set, multiple, post_correction):
+def test(model, test_data, char_set, label_set, post_correction):
 	test_X, test_y = test_data[0], test_data[1]
 	test_y = [one_hot_decoder(i, char_set) for i in test_y]
 	test_y = [list2str(i) for i in test_y]
-	pred_res = pred(model, test_X, char_set, label_set, multiple, post_correction)
+	pred_res = pred(model, test_X, char_set, label_set, post_correction)
 	# for i in pred_res:
 	# 	print i
 	nb_correct = sum(pred_res[i]==test_y[i] for i in range(len(pred_res)))
@@ -40,7 +39,7 @@ def test(model, test_data, char_set, label_set, multiple, post_correction):
 
 def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple):
 	X_train, y_train = train_data[0], train_data[1]
-	sample_weight = get_sample_weight(y_train, char_set, multiple)
+	sample_weight = get_sample_weight(y_train, char_set)
 	# transform label to multiple number single character format
 	if multiple:
 		y_train = mul2sin(y_train)
@@ -67,18 +66,18 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set,
 
 
 def main():
-	img_width, img_height = 150, 50
-	img_channels = 3 
+	img_width, img_height = 512, 48
+	img_channels = 1 
 	batch_size = 32
 	nb_epoch = 500
 	multiple = False
 	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/beijing/'
-	val_data_dir = 'test_data/chinese_50000/'
+	train_data_dir = 'train_data/hubei/'
+	val_data_dir = 'test_data/asc_seq/'
 	test_data_dir = 'test_data/phone_number_ori/'
-	weights_file_path = 'save_model/2016-07-22/weights.66-0.00.hdf5'
+	weights_file_path = 'save_model/2016-08-18/weights.01-0.80.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -87,7 +86,7 @@ def main():
 	print 'nb_classes:', nb_classes
 	print 'max_nb_char:', max_nb_char
 	print 'size_label_set:', len(label_set)
-	model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
+	model = build_vgg_merge(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
 	model.load_weights(weights_file_path) # load trained model
 
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
@@ -96,11 +95,11 @@ def main():
 	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	test(model, train_data, char_set, label_set, multiple, post_correction)
+	test(model, train_data, char_set, label_set, post_correction)
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	# test(model, val_data, char_set, label_set, multiple, post_correction)
+	# test(model, val_data, char_set, label_set, post_correction)
 	# test_data = load_data(test_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	# test(model, test_data, char_set, label_set, multiple, post_correction)
+	# test(model, test_data, char_set, label_set, post_correction)
 
 
 if __name__ == '__main__':

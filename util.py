@@ -33,10 +33,6 @@ def list2str(data):
 	return ''.join([i if i != 'empty' else '' for i in data])
 
 
-def sin2mul(data):
-	return [[data[j][i] for j in range(len(data))] for i in range(len(data[0]))]
-
-
 def mul2sin(y):
 	new_y = []
 	for i in range(y.shape[1]):
@@ -52,6 +48,7 @@ def plot_loss_figure(history, save_path):
 	plt.ylabel('loss')
 	plt.title('loss figure')
 	plt.savefig(save_path)
+
 
 def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx):
 	"""
@@ -137,7 +134,7 @@ def categorical_accuracy_per_sequence(y_true, y_pred):
 				  K.argmax(y_pred, axis=-1)), axis=-1))
 
 
-def get_sample_weight(label, whole_set, multiple):
+def get_sample_weight(label, whole_set):
 	ret = []
 	for i in label:
 		ret.append([])
@@ -152,13 +149,4 @@ def get_sample_weight(label, whole_set, multiple):
 				weight = 1
 			ret[-1].append(weight)
 	ret = np.asarray(ret)
-	# Attention!!! multiple output format
-	if multiple:
-		new_ret = {}
-		for i in range(ret.shape[1]):
-			new_ret['dense_%d'%(3+i)] = ret[:,i] # Attention, 3 is corespond to the model architecture 
-		# new_ret['dense_3'] = ret[0, :]
-		ret = new_ret
-		print ret['dense_3'].shape, len(ret)
-	# ===================================
 	return ret
