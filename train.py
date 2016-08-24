@@ -6,7 +6,6 @@ from util import one_hot_decoder, plot_loss_figure, load_data, get_char_set, get
 from util import get_sample_weight, list2str, mul2sin
 from post_correction import get_label_set, correction
 from architecture.CNN_LSTM import build_CNN_LSTM
-from architecture.cv_vgg import build_vgg
 from architecture.vgg_merge import build_vgg_merge
 
 # @profile
@@ -37,14 +36,9 @@ def test(model, test_data, char_set, label_set, post_correction):
 	print 'Acurracy: ', float(nb_correct) / len(pred_res)
 
 
-def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple):
+def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set):
 	X_train, y_train = train_data[0], train_data[1]
 	sample_weight = get_sample_weight(y_train, char_set)
-	# transform label to multiple number single character format
-	if multiple:
-		y_train = mul2sin(y_train)
-		if val_data is not None:
-			val_data[1] = mul2sin(val_data[1])
 	print 'X_train shape:', X_train.shape
 	print X_train.shape[0], 'train samples'
 	if os.path.exists(save_dir) == False:
@@ -66,18 +60,17 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set,
 
 
 def main():
-	img_width, img_height = 512, 48
+	img_width, img_height = 250, 50
 	img_channels = 1 
 	batch_size = 32
 	nb_epoch = 500
-	multiple = False
-	post_correction = False
+	post_correction = True
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/hubei/'
-	val_data_dir = 'test_data/asc_seq/'
+	train_data_dir = 'train_data/zhejiang_real/'
+	val_data_dir = 'train_data/zhejiang/'
 	test_data_dir = 'test_data/phone_number_ori/'
-	weights_file_path = 'save_model/2016-08-18/weights.01-0.80.hdf5'
+	weights_file_path = 'save_model/2016-08-24/weights.99-1.44.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -86,13 +79,13 @@ def main():
 	print 'nb_classes:', nb_classes
 	print 'max_nb_char:', max_nb_char
 	print 'size_label_set:', len(label_set)
-	model = build_vgg_merge(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
+	model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
 	model.load_weights(weights_file_path) # load trained model
 
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	val_data = None
+	val_data = None 
 	train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx) 
-	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set, multiple)
+	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	test(model, train_data, char_set, label_set, post_correction)

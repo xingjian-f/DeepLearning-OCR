@@ -52,6 +52,17 @@ class chi_single(vgg):
         vgg.__init__(self)
 
 
+class zhejiang(cnn_lstm):
+    def __init__(self):
+        self.img_width = 250
+        self.img_height = 50
+        self.img_channels = 1
+        self.post_correction = True
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/zhejiang_real/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-24/weights.99-1.44.hdf5'
+        cnn_lstm.__init__(self)   
+
+
 class jiangsu(cnn_lstm):
     def __init__(self):
         self.img_width = 150

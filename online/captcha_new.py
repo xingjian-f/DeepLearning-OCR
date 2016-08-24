@@ -6,8 +6,8 @@ import numpy as np
 from util import load_img
 
 
-def parse_expr(expr):
-    if expr[-2:] == u'等于':
+def parse_expr(expr, pinyin):
+    if expr[-2:] == u'等于' or expr[-3:] == u'等于？':
         rep_dict = [
             (u'零', '0'),
             (u'壹', '1'),
@@ -19,16 +19,30 @@ def parse_expr(expr):
             (u'柒', '7'),
             (u'捌', '8'),
             (u'玖', '9'),
+            (u'加上', '+'),
+            (u'减去', '-'),
+            (u'乘以', '*'),
             (u'加', '+'),
             (u'乘', '*'),
             (u'减', '-'),
-            (u'等于', '')]
+            (u'等于？', ''),
+            (u'等于', '')
+        ]
         for i in rep_dict:
             expr = expr.replace(i[0], i[1])
         try:
             return eval(expr)
         except:
             return False
+    elif expr[-6:] == u'的拼音首字母': # ZheJiang's captcha
+        ret = []
+        # print expr
+        for i in range(len(expr)-6):
+            char = expr[i]
+            if char not in pinyin:
+                return False
+            ret.append(pinyin[char][0])
+        return ''.join(ret)
     else:
         return expr
 
@@ -42,7 +56,7 @@ def load_data(img_vals, width, height, channels):
     return x
 
 
-def predict(predictor, post_vals):
+def predict(predictor, post_vals, pinyin=None):
     width = predictor.img_width
     height = predictor.img_height
     channels = predictor.img_channels
@@ -55,7 +69,7 @@ def predict(predictor, post_vals):
     res = {}
     for i, expr in enumerate(predictions):
         valid = True
-        ans = parse_expr(expr)
+        ans = parse_expr(expr, pinyin)
         if ans is False:
             valid = False
         form = {'valid':valid, 'answer':ans, 'expr':expr}
