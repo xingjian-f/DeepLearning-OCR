@@ -53,14 +53,19 @@ def build_vgg_merge(channels, width, height, output_size, nb_classes):
 	out = []
 	for i in range(output_size):
 		out.append(Dense(nb_classes, activation='softmax')(drop7))
-	merged_out = merge(out, mode='concat')
-	shaped_out = Reshape((output_size, nb_classes))(merged_out)
+	if output_size > 1:
+		merged_out = merge(out, mode='concat')
+		shaped_out = Reshape((output_size, nb_classes))(merged_out)
+		sample_weight_mode = 'temporal'
+	else:
+		shaped_out = out
+		sample_weight_mode = None
 	model = Model(input=[inputs], output=shaped_out)
 	model.summary()
 	model.compile(loss='categorical_crossentropy',
 				  optimizer='adam',
 				  metrics=['accuracy'],
-				  sample_weight_mode='temporal'
+				  sample_weight_mode = sample_weight_mode
 				  )
 
 	return model

@@ -89,6 +89,8 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 	x /= 255 # normalized
 	y = [one_hot_encoder(i, char_set, char2idx) for i in y]
 	y = np.asarray(y)
+	if y.shape[1] == 1: # keras bug ?
+		y = y[:,0,:] 
 	print 'Data loaded, spend time(m) :', (time.time()-tag)/60
 	return [x, y]
 
@@ -135,6 +137,8 @@ def categorical_accuracy_per_sequence(y_true, y_pred):
 
 
 def get_sample_weight(label, whole_set):
+	if label.ndim < 3: # in case output_size==1
+		return None
 	ret = []
 	for i in label:
 		ret.append([])

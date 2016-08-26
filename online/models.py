@@ -2,7 +2,7 @@
 import sys
 sys.path.append('/home/feixingjian/DeepLearning-OCR/')
 from architecture.CNN_LSTM import build_CNN_LSTM
-from architecture.cv_vgg import build_vgg
+from architecture.vgg_merge import build_vgg_merge
 from util import get_char_set, get_maxnb_char, one_hot_decoder, list2str
 from post_correction import get_label_set, correction
 
@@ -25,31 +25,29 @@ class model(object):
         return pred_res
 
 
-class vgg(model):
+class vgg_merge(model):
     def __init__(self):
         model.__init__(self)
-        self.multiple = True
-        self.model = build_vgg(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
+        self.model = build_vgg_merge(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型
 
 
 class cnn_lstm(model):
     def __init__(self):
         model.__init__(self)
-        self.multiple = False
         self.model = build_CNN_LSTM(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型
 
 
-class chi_single(vgg):
+class chi_single(vgg_merge):
     def __init__(self):
         self.img_width = 48
         self.img_height = 48
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chinese_200000/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-15/weights.35-0.28.hdf5'
-        vgg.__init__(self)
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chinese_400000/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-25/weights.13-0.21.hdf5'
+        vgg_merge.__init__(self)
 
 
 class zhejiang(cnn_lstm):
