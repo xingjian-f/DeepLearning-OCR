@@ -1,13 +1,15 @@
 from flask import Flask, request, render_template, make_response
 from ocr import predict
-from models import chi_single
+from models import chi_single, single_cha
 
 app = Flask(__name__)
-chi_single_model = chi_single()
+# chi_single_model = chi_single()
+single_cha_model = single_cha()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-	global chi_single_model
+	# global chi_single_model
+	global single_cha_model
 	if request.method == 'POST':
 		if 'province' in request.form:
 			imgs = request.files.to_dict()
@@ -15,7 +17,7 @@ def index():
 		else:
 			imgs = request.form
 			types = 'stringio'
-		res = predict(chi_single_model, imgs, types)
+		res = predict(single_cha_model, imgs, types)
 		return res
 	if request.method == 'GET':
 		return render_template('index.html')

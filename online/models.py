@@ -3,6 +3,7 @@ import sys
 sys.path.append('/home/feixingjian/DeepLearning-OCR/')
 from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.vgg_merge import build_vgg_merge
+from architecture.shallow import build_shallow
 from util import get_char_set, get_maxnb_char, one_hot_decoder, list2str
 from post_correction import get_label_set, correction
 
@@ -39,6 +40,13 @@ class cnn_lstm(model):
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型
 
 
+class shallow(model):
+    def __init__(self):
+        model.__init__(self)
+        self.model = build_shallow(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
+        self.model.load_weights(self.weights_file_path) # 读取训练好的模型   
+        
+
 class chi_single(vgg_merge):
     def __init__(self):
         self.img_width = 48
@@ -47,6 +55,28 @@ class chi_single(vgg_merge):
         self.post_correction = False
         self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chinese_400000/'
         self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-25/weights.13-0.21.hdf5'
+        vgg_merge.__init__(self)
+
+
+class single_cha(shallow):
+    def __init__(self):
+        self.img_width = 48
+        self.img_height = 48
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/single_cha_500000/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-02/weights.490-0.04.hdf5'
+        shallow.__init__(self)
+
+
+class guizhou(vgg_merge):
+    def __init__(self):
+        self.img_width = 260
+        self.img_height = 40
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/guizhou_res/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-30/weights.137-0.12.hdf5'
         vgg_merge.__init__(self)
 
 

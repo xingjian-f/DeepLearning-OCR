@@ -1,7 +1,7 @@
 import json
 from flask import Flask, request, render_template, make_response
 from captcha_new import predict
-from models import beijing, guangdong, jiangsu, hubei, zhejiang
+from models import beijing, guangdong, jiangsu, hubei, zhejiang, guizhou
 
 app = Flask(__name__)
 with open('pinyin') as f:
@@ -17,16 +17,19 @@ hubei_model = hubei()
 print 'Model loaded 4.............................................................'
 zhejiang_model = zhejiang()
 print 'Model loaded 5.............................................................'
-
+guizhou_model = guizhou()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
 	global guangdong_model, beijing_model, jiangsu_model, hubei_model
+	global zhejiang_model, guizhou_model
 	if request.method == 'POST':
 		imgs = request.files.to_dict()
 		province = request.form['province']
 		if province == 'guangdong':
 			res = predict(guangdong_model, imgs)
+		elif province == 'guizhou':
+			res = predict(guizhou_model, imgs)
 		elif province == 'zhejiang':
 			res = predict(zhejiang_model, imgs, pinyin)
 		elif province == 'jiangsu':
