@@ -62,15 +62,17 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 def main():
 	img_width, img_height = 48, 48
 	img_channels = 1 
-	batch_size = 1024
+	batch_size = 512
 	nb_epoch = 500
 	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/single_cha_500000/'
-	val_data_dir = 'train_data/chinese_400000/'
-	test_data_dir = 'test_data/phone_number_ori/'
-	weights_file_path = 'save_model/2016-09-02/weights.490-0.04.hdf5'
+	# train_data_dir = 'train_data/tan_data/'
+	train_data_dir = 'train_data/single_1000000/'
+	val_data_dir = 'train_data//'
+	test_data_dir = 'test_data//'
+	# weights_file_path = 'save_model/2016-09-10/weights.02-0.05.hdf5'
+	weights_file_path = 'save_model/2016-09-09/weights.151-0.19.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -84,13 +86,13 @@ def main():
 
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	val_data = None 
-	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx) 
-	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
+	train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx) 
+	train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	# test(model, train_data, char_set, label_set, post_correction)
-	val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	test(model, val_data, char_set, label_set, post_correction)
+	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
+	# test(model, val_data, char_set, label_set, post_correction)
 	# test_data = load_data(test_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	# test(model, test_data, char_set, label_set, post_correction)
 

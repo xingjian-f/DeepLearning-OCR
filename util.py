@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt 
 import keras.backend as K
+import glob
 
 
 def one_hot_encoder(data, whole_set, char2idx):
@@ -33,13 +34,6 @@ def list2str(data):
 	return ''.join([i if i != 'empty' else '' for i in data])
 
 
-def mul2sin(y):
-	new_y = []
-	for i in range(y.shape[1]):
-		new_y.append(y[:,i,:])
-	return new_y
-
-
 def plot_loss_figure(history, save_path):
 	train_loss = history.history['loss']
 	val_loss = history.history['val_loss']
@@ -62,7 +56,7 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 	y = []
 
 	for dirpath, dirnames, filenames in os.walk(input_dir):
-		nb_pic = len(filenames)-1
+		nb_pic = len(glob.glob(dirpath + os.sep + '*.jpg'))
 		if nb_pic <= 0:
 			continue
 		for i in range(1, nb_pic+1):

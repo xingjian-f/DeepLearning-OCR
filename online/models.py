@@ -64,8 +64,8 @@ class single_cha(shallow):
         self.img_height = 48
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/single_cha_500000/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-02/weights.490-0.04.hdf5'
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/tan_data/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-10/weights.02-0.05.hdf5'
         shallow.__init__(self)
 
 
