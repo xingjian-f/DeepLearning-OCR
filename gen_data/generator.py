@@ -2,17 +2,19 @@
 import random
 import os
 import string
+import json
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np 
 from scipy.ndimage.morphology import grey_dilation, grey_erosion
 from PIL import ImageFilter
+from skimage.util import random_noise, img_as_float
 
 
 def randRGB():
     return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 
-def captcha_draw(label, fonts, dir_path):
+def captcha_draw(label, fonts, dir_path, pic_id):
     # width, height = 512, 48
     # size_cha = random.randint(24, 48) # 字符大小
     # derx = random.randint(0, 16)
@@ -30,21 +32,22 @@ def captcha_draw(label, fonts, dir_path):
     im = Image.new(mode='L', size=(width, height), color='white') # color 背景颜色，size 图片大小
     drawer = ImageDraw.Draw(im)
     font = ImageFont.truetype(random.choice(fonts), size_cha)
+
     drawer.text(xy=(derx, dery), text=label, font=font, fill='black') #text 内容，font 字体（包括大小）
+    if label != ' ' and (img_as_float(im) == np.ones((48, 48))).all():
+        # in case the label is not in this font, then the image will be all white
+        return 0
     if random.random() < 0.5:
         im = Image.fromarray(grey_erosion(im, size=(2, 2))) # erosion
+    if random.random() < 0.5:
+        im = Image.fromarray((random_noise(img_as_float(im), mode='s&p')*255).astype(np.uint8))
     im = im.filter(ImageFilter.GaussianBlur(radius=random.random()))
     # im.show()
-    write2file(dir_path, label, im)
+    write2file(dir_path, label, im, pic_id)
+    return 1
 
     
-def write2file(dir_path, label, im):
-    if os.path.exists(dir_path) == False: # 如果文件夹不存在，则创建对应的文件夹
-        os.makedirs(dir_path)
-        pic_id = 1
-    else:
-        pic_id = len(os.listdir(dir_path))
-
+def write2file(dir_path, label, im, pic_id):
     img_name = str(pic_id) + '.jpg'
     img_path = dir_path + img_name
     label_path = dir_path + 'label.txt'
@@ -52,6 +55,7 @@ def write2file(dir_path, label, im):
         f.write((label+'\n').encode('utf-8')) # 在label文件末尾添加新图片的text内容
     print img_path
     im.save(img_path)
+
 
 if __name__ == "__main__":
     # font_dir = 'fonts/english/'
@@ -68,12 +72,21 @@ if __name__ == "__main__":
 
     font_dir = 'fonts/chinese/'
     font_paths = map(lambda x: font_dir+x, os.listdir(font_dir))
-    chinese_set = open('common3000_chi.txt').readline().decode('utf-8').strip('\n\r')
+    chinese_set = open('chinese_6500.txt').readline().decode('utf-8').strip('\n\r')
     eng_set = string.letters + string.digits + string.punctuation
-    chi_punctuation = u'，。；'
-    cha_set = chinese_set + eng_set + chi_punctuation
-    cnt = 500000
-    while cnt > 0:
-        label = random.choice(cha_set)
-        captcha_draw(label, font_paths, 'single_cha_500000/')
-        cnt -= 1
+    chi_punctuation = u'。， '
+    cha_set = list(set(chinese_set + eng_set + chi_punctuation))
+    weight = json.loads(open('weight').readline().decode('utf-8'))
+    choice_p = [weight[i] for i in cha_set]
+    img_dir = 'single_1000000/'
+    if os.path.exists(img_dir) == False: # 如果文件夹不存在，则创建对应的文件夹
+        os.makedirs(img_dir)
+        pic_id = 1
+    else:
+        pic_id = len(os.listdir(img_dir))
+
+
+    cnt = 1000000
+    for i in range(cnt):
+        label = np.random.choice(cha_set, p=choice_p)
+        pic_id += captcha_draw(label, font_paths, img_dir, pic_id)
