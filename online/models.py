@@ -4,7 +4,7 @@ sys.path.append('/home/feixingjian/DeepLearning-OCR/')
 from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.vgg_merge import build_vgg_merge
 from architecture.shallow import build_shallow
-from util import get_char_set, get_maxnb_char, one_hot_decoder, list2str
+from util import get_char_set, get_maxnb_char, one_hot_decoder, list2str, top_one_prob
 from post_correction import get_label_set, correction
 
 
@@ -14,16 +14,25 @@ class model(object):
         self.nb_classes = len(self.char_set)
         self.max_nb_char = get_maxnb_char(self.train_data_dir)
         self.label_set = get_label_set(self.train_data_dir)
+        self.pred_probs = None
 
 
     def pred(self, X):
-        pred_res = self.model.predict(X)
+        pred_res = self.model.predict(X, batch_size=256)
+        self.pred_probs = pred_res
         pred_res = [one_hot_decoder(i, self.char_set) for i in pred_res]
         pred_res = [list2str(i) for i in pred_res]
         # post correction
         if self.post_correction:
             pred_res = correction(pred_res, self.label_set)
         return pred_res
+
+
+    def get_prob(self):
+        probs = [top_one_prob(i) for i in self.pred_probs]
+        probs = [i[0] for i in probs] #  TODO  
+        return probs
+
 
 
 class vgg_merge(model):
@@ -64,8 +73,8 @@ class single_cha(shallow):
         self.img_height = 48
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/tan_data/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-10/weights.02-0.05.hdf5'
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/single_1000000/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-13/weights.05-0.09.hdf5'
         shallow.__init__(self)
 
 
