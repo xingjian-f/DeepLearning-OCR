@@ -34,7 +34,7 @@ def build_shallow(channels, width, height, output_size, nb_classes):
 	# flaten
 	flat = Flatten()(drop5)
 	# 1 dense
-	dense1 = Dense(512, activation='relu')(flat)
+	dense1 = Dense(2048, activation='relu')(flat)
 	bn6 = BatchNormalization(mode=0, axis=1)(dense1)
 	drop6 = Dropout(0.5)(bn6)
 	# output

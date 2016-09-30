@@ -26,7 +26,18 @@ def one_hot_decoder(data, whole_set):
 		data = np.expand_dims(data, 0)
 	for probs in data:
 		idx = np.argmax(probs)
+		# print idx, whole_set[idx], probs[idx]
 		ret.append(whole_set[idx])
+	return ret
+
+
+def top_one_prob(data):
+	ret = []
+	if data.ndim == 1: # keras bug ?
+		data = np.expand_dims(data, 0)
+	for probs in data:
+		idx = np.argmax(probs)
+		ret.append(probs[idx])
 	return ret
 
 
@@ -141,7 +152,7 @@ def get_sample_weight(label, whole_set):
 			cha = whole_set[np.argmax(j)]
 			weight = 0
 			if cha == 'empty' and tag == False:
-				weight = 1
+				weight = 1 # TODO
 				tag = True 
 			if cha != 'empty':
 				weight = 1
