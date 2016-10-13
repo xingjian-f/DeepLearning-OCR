@@ -7,8 +7,8 @@ from util import get_sample_weight, list2str
 from post_correction import get_label_set, correction
 from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.shallow import build_shallow
-from architecture.shallow2 import build_shallow2
 from architecture.shallow_weight import build_shallow_weight
+
 
 # @profile
 def pred(model, X, char_set, label_set, post_correction):
@@ -49,7 +49,7 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 	start_time = time.time()
 	save_path = save_dir + 'weights.{epoch:02d}-{val_loss:.2f}.hdf5'
 	check_pointer = ModelCheckpoint(save_path, 
-		save_best_only=False)
+		save_best_only=True)
 	history = model.fit(X_train, y_train, batch_size=batch_size, nb_epoch=nb_epoch, 
 		validation_data=val_data,
 		validation_split=0.1, 
@@ -63,7 +63,7 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 def main():
 	# img_width, img_height = 48, 48
-	img_width, img_height = 250, 50
+	img_width, img_height = 300, 50
 	img_channels = 1 
 	# batch_size = 1024
 	batch_size = 32
@@ -71,11 +71,11 @@ def main():
 	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/zhejiang_real/'
+	train_data_dir = 'train_data/shandong_train/'
 	# train_data_dir = 'train_data/single_1000000/'
-	val_data_dir = 'train_data/jianli_single/'
+	val_data_dir = 'train_data/shandong_val/'
 	test_data_dir = 'test_data//'
-	weights_file_path = 'save_model/2016-09-13/weights.32-8.51.hdf5'
+	weights_file_path = 'save_model/2016-10-11/weights.06-0.00.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -84,12 +84,12 @@ def main():
 	print 'nb_classes:', nb_classes
 	print 'max_nb_char:', max_nb_char
 	print 'size_label_set:', len(label_set)
-	# model = build_shallow2(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
-	model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
+	model = build_shallow(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
+	# model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
 	# model.load_weights(weights_file_path) # load trained model
 
-	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	val_data = None 
+	val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
+	# val_data = None 
 	train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx) 
 	train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 

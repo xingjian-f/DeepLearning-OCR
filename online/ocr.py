@@ -39,8 +39,8 @@ def predict(predictor, post_vals, types):
     # format reply
     res = {}
     for i, expr in enumerate(predictions):
-        # res[keys[i]] = expr # only char
-        res[keys[i]] = '%s(%.2f)' % (expr, probs[i]) # charactor and it's probability
+        res[keys[i]] = expr # only char
+        # res[keys[i]] = '%s(%.2f)' % (expr, probs[i]) # charactor and it's probability
     # print res, len(res)
     print time.time() - t1, len(res)
     return json.dumps(res, ensure_ascii=False) # utf-8 output

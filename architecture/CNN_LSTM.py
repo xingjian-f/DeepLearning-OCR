@@ -5,6 +5,8 @@ from keras.layers import Convolution2D, MaxPooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.layers.wrappers import TimeDistributed
 from util import categorical_accuracy_per_sequence
+from keras.regularizers import l2
+
 
 def build_CNN_LSTM(channels, width, height, lstm_output_size, nb_classes):
 	model = Sequential()

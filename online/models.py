@@ -54,17 +54,6 @@ class shallow(model):
         model.__init__(self)
         self.model = build_shallow(self.img_channels, self.img_width, self.img_height, self.max_nb_char, self.nb_classes) # 生成CNN的架构
         self.model.load_weights(self.weights_file_path) # 读取训练好的模型   
-        
-
-class chi_single(vgg_merge):
-    def __init__(self):
-        self.img_width = 48
-        self.img_height = 48
-        self.img_channels = 1
-        self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chinese_400000/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-25/weights.13-0.21.hdf5'
-        vgg_merge.__init__(self)
 
 
 class single_cha(shallow):
@@ -75,6 +64,39 @@ class single_cha(shallow):
         self.post_correction = False
         self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/single_1000000/'
         self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-13/weights.05-0.09.hdf5'
+        shallow.__init__(self)
+
+
+class jiangxi(shallow):
+    def __init__(self):
+        self.img_width = 150
+        self.img_height = 32
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/jiangxi_train/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.01-0.00.hdf5'
+        shallow.__init__(self)
+
+
+class shanghai(shallow):
+    def __init__(self):
+        self.img_width = 160
+        self.img_height = 53
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/shanghai/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.33-0.01.hdf5'
+        shallow.__init__(self)
+
+
+class shandong(shallow):
+    def __init__(self):
+        self.img_width = 300
+        self.img_height = 50
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/shandong_train/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.29-0.02.hdf5'
         shallow.__init__(self)
 
 
@@ -142,3 +164,17 @@ class hubei(cnn_lstm):
         self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/hubei/'
         self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-11/weights.32-0.00.hdf5'
         cnn_lstm.__init__(self)
+
+
+class anhui(cnn_lstm):
+    def __init__(self):
+        self.img_width = 200
+        self.img_height = 50
+        self.img_channels = 1
+        self.post_correction = True
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/anhui/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-09/weights.15-0.08.hdf5'
+        cnn_lstm.__init__(self)
+
+
+    
