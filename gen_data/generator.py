@@ -25,8 +25,8 @@ def captcha_draw(label, fonts, dir_path, pic_id):
     # # im.show()
     # write2file(dir_path, label, im)
 
-    width, height = 48, 48
-    size_cha = random.randint(20, 48) # 字符大小
+    width, height = 32, 32
+    size_cha = random.randint(16, 28) # 字符大小
     derx = random.randint(0, max(width-size_cha-10, 0))
     dery = random.randint(0, max(height-size_cha-10, 0))
     im = Image.new(mode='L', size=(width, height), color='white') # color 背景颜色，size 图片大小
@@ -34,14 +34,20 @@ def captcha_draw(label, fonts, dir_path, pic_id):
     font = ImageFont.truetype(random.choice(fonts), size_cha)
 
     drawer.text(xy=(derx, dery), text=label, font=font, fill='black') #text 内容，font 字体（包括大小）
-    if label != ' ' and (img_as_float(im) == np.ones((48, 48))).all():
-        # in case the label is not in this font, then the image will be all white
-        return 0
-    if random.random() < 0.5:
-        im = Image.fromarray(grey_erosion(im, size=(2, 2))) # erosion
-    if random.random() < 0.5:
-        im = Image.fromarray((random_noise(img_as_float(im), mode='s&p')*255).astype(np.uint8))
-    im = im.filter(ImageFilter.GaussianBlur(radius=random.random()))
+    # if label != ' ' and (img_as_float(im) == np.ones((48, 48))).all():
+    #     # in case the label is not in this font, then the image will be all white
+    #     return 0
+    im = im.convert('RGBA')
+    max_angle = 45 # to be tuned
+    angle = random.randint(-max_angle, max_angle)
+    im = im.rotate(angle, Image.BILINEAR, expand=0)
+    fff = Image.new('RGBA', im.size, (255,)*4)
+    im = Image.composite(im, fff, im)
+    # if random.random() < 0.5:
+    #     im = Image.fromarray(grey_erosion(im, size=(2, 2))) # erosion
+    # if random.random() < 0.5:
+    #     im = Image.fromarray((random_noise(img_as_float(im), mode='s&p')*255).astype(np.uint8))
+    # im = im.filter(ImageFilter.GaussianBlur(radius=random.random()))
     # im.show()
     write2file(dir_path, label, im, pic_id)
     return 1
@@ -75,10 +81,11 @@ if __name__ == "__main__":
     chinese_set = open('chinese_6500.txt').readline().decode('utf-8').strip('\n\r')
     eng_set = string.letters + string.digits + string.punctuation
     chi_punctuation = u'。， '
-    cha_set = list(set(chinese_set + eng_set + chi_punctuation))
+    # cha_set = list(set(chinese_set + eng_set + chi_punctuation))
+    cha_set = list(set(chinese_set))
     weight = json.loads(open('weight').readline().decode('utf-8'))
     choice_p = [weight[i] for i in cha_set]
-    img_dir = 'single_1000000/'
+    img_dir = 'chi_rotate_1000000/'
     if os.path.exists(img_dir) == False: # 如果文件夹不存在，则创建对应的文件夹
         os.makedirs(img_dir)
         pic_id = 1
@@ -88,5 +95,8 @@ if __name__ == "__main__":
 
     cnt = 1000000
     for i in range(cnt):
-        label = np.random.choice(cha_set, p=choice_p)
+        # label = np.random.choice(cha_set, p=choice_p)
+        label = np.random.choice(cha_set)
+        if len(label) != 1:
+            continue
         pic_id += captcha_draw(label, font_paths, img_dir, pic_id)
