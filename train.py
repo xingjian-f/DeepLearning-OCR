@@ -88,7 +88,7 @@ def main():
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	val_data = None 
 	train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx) 
-	# train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
+	train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	test(model, train_data, char_set, label_set, post_correction)

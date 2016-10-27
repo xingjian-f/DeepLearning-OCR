@@ -47,14 +47,16 @@ def build_shallow(channels, width, height, output_size, nb_classes):
 		merged_out = merge(out, mode='concat')
 		shaped_out = Reshape((output_size, nb_classes))(merged_out)
 		sample_weight_mode = 'temporal'
+		metrics = [categorical_accuracy_per_sequence]
 	else:
 		shaped_out = out
 		sample_weight_mode = None
+		metrics = ['accuracy']
 	model = Model(input=[inputs], output=shaped_out)
 	model.summary()
 	model.compile(loss='categorical_crossentropy',
 				  optimizer='adam',
-				  metrics=[categorical_accuracy_per_sequence],
+				  metrics=metrics,
 				  sample_weight_mode = sample_weight_mode
 				  )
 
