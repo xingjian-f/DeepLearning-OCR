@@ -78,6 +78,28 @@ class jiangxi(shallow):
         shallow.__init__(self)
 
 
+class kanzhun(shallow):
+    def __init__(self):
+        self.img_width = 100
+        self.img_height = 50
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/kanzhun_1000/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-24/weights.44-0.91.hdf5'
+        shallow.__init__(self)
+
+
+class lagou(shallow):
+    def __init__(self):
+        self.img_width = 113
+        self.img_height = 42
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/lagou_train/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-27/weights.25-0.27.hdf5'
+        shallow.__init__(self)
+
+
 class shanghai(shallow):
     def __init__(self):
         self.img_width = 160

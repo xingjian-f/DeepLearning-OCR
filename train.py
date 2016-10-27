@@ -5,9 +5,7 @@ from keras.callbacks import ModelCheckpoint
 from util import one_hot_decoder, plot_loss_figure, load_data, get_char_set, get_maxnb_char
 from util import get_sample_weight, list2str
 from post_correction import get_label_set, correction
-from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.shallow import build_shallow
-from architecture.shallow_weight import build_shallow_weight
 
 
 # @profile
@@ -63,19 +61,19 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 def main():
 	# img_width, img_height = 48, 48
-	img_width, img_height = 300, 50
+	img_width, img_height = 113, 42
 	img_channels = 1 
 	# batch_size = 1024
 	batch_size = 32
-	nb_epoch = 500
+	nb_epoch = 1000
 	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/shandong_train/'
+	train_data_dir = 'train_data/lagou_train/'
 	# train_data_dir = 'train_data/single_1000000/'
-	val_data_dir = 'train_data/shandong_val/'
+	val_data_dir = 'train_data/lagou_val/'
 	test_data_dir = 'test_data//'
-	weights_file_path = 'save_model/2016-10-11/weights.06-0.00.hdf5'
+	weights_file_path = 'save_model/2016-10-27/weights.112-0.30.hdf5'
 	char_set, char2idx = get_char_set(train_data_dir)
 	nb_classes = len(char_set)
 	max_nb_char = get_maxnb_char(train_data_dir)
@@ -85,8 +83,7 @@ def main():
 	print 'max_nb_char:', max_nb_char
 	print 'size_label_set:', len(label_set)
 	model = build_shallow(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
-	# model = build_CNN_LSTM(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
-	# model.load_weights(weights_file_path) # load trained model
+	model.load_weights(weights_file_path) # load trained model
 
 	val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	# val_data = None 
