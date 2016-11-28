@@ -100,9 +100,18 @@ def load_data(input_dir, max_nb_cha, width, height, channels, char_set, char2idx
 	return [x, y]
 
 
+def my_resize(im, width, height):
+	box = max(im.size)
+	back = Image.new('RGB', (box, box), color='white')
+	back.paste(im,(0,0))
+	back = back.resize((width, height))
+	return back
+
+
 def load_img(path, width, height, channels):
 	img = Image.open(path)
 	img = img.resize((width, height))
+	# img = my_resize(img, width, height)
 	if channels==1: # convert the image to gray scale image if it's RGB
 		img = img.convert('L')
 	img = np.asarray(img, dtype='float32')

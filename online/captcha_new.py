@@ -78,6 +78,9 @@ def predict(predictor, post_vals, pinyin=None):
     img_vals = post_vals.values()
     X = load_data(img_vals, width, height, channels)
     predictions = predictor.pred(X)
+    if pinyin == 'prob': # TODO
+        predictions = map(lambda x: ','.join(map(str, x)), predictor.pred_probs)
+    # print predictor.pred_probs
     # format reply
     res = {}
     for i, expr in enumerate(predictions):

@@ -61,15 +61,15 @@ def train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 def main():
 	# img_width, img_height = 48, 48
-	img_width, img_height = 32, 32
+	img_width, img_height = 223, 50
 	img_channels = 1 
-	batch_size = 1024
-	# batch_size = 32
+	# batch_size = 1024
+	batch_size = 32
 	nb_epoch = 1000
 	post_correction = False
 
 	save_dir = 'save_model/' + str(datetime.now()).split('.')[0].split()[0] + '/' # model is saved corresponding to the datetime
-	train_data_dir = 'train_data/chi_rotate_1000000/'
+	train_data_dir = 'train_data/nacao_captcha1/'
 	# train_data_dir = 'train_data/single_1000000/'
 	val_data_dir = 'train_data/lagou_val/'
 	test_data_dir = 'test_data//'
@@ -83,7 +83,7 @@ def main():
 	print 'max_nb_char:', max_nb_char
 	print 'size_label_set:', len(label_set)
 	model = build_shallow(img_channels, img_width, img_height, max_nb_char, nb_classes) # build CNN architecture
-	model.load_weights(weights_file_path) # load trained model
+	# model.load_weights(weights_file_path) # load trained model
 
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	val_data = None 
@@ -91,7 +91,7 @@ def main():
 	train(model, batch_size, nb_epoch, save_dir, train_data, val_data, char_set)
 
 	# train_data = load_data(train_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
-	test(model, train_data, char_set, label_set, post_correction)
+	# test(model, train_data, char_set, label_set, post_correction)
 	# val_data = load_data(val_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)
 	# test(model, val_data, char_set, label_set, post_correction)
 	# test_data = load_data(test_data_dir, max_nb_char, img_width, img_height, img_channels, char_set, char2idx)

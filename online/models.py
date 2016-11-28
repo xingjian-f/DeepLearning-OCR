@@ -67,6 +67,28 @@ class single_cha(shallow):
         shallow.__init__(self)
 
 
+class chi_rotate(shallow):
+    def __init__(self):
+        self.img_width = 32
+        self.img_height = 32
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chi_rotate_1000000/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-27/weights.981-0.32.hdf5'
+        shallow.__init__(self)
+
+
+class nacao(shallow):
+    def __init__(self):
+        self.img_width = 223
+        self.img_height = 50
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/nacao_captcha1/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-11-28/weights.58-0.01.hdf5'
+        shallow.__init__(self)
+
+
 class jiangxi(shallow):
     def __init__(self):
         self.img_width = 150
@@ -108,6 +130,17 @@ class shanghai(shallow):
         self.post_correction = False
         self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/shanghai/'
         self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.33-0.01.hdf5'
+        shallow.__init__(self)
+
+
+class hunan(shallow):
+    def __init__(self):
+        self.img_width = 160
+        self.img_height = 53
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/hunan_captcha/'
+        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-11-09/weights.11-0.01.hdf5'
         shallow.__init__(self)
 
 
