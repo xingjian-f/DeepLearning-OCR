@@ -90,7 +90,7 @@ def predict(predictor, post_vals, pinyin=None):
             valid = False
         form = {'valid':valid, 'answer':ans, 'expr':expr}
         res[keys[i]] = form
-    if len(res) == 1: # in case input data is not in batch form 
+    if len(res) == 1 and 'file' in res: # in case input data is not in batch form 
         res = res['file']
     # print res, len(res)
     return json.dumps(res, ensure_ascii=False) # utf-8 output
