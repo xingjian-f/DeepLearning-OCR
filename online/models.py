@@ -62,8 +62,8 @@ class single_cha(shallow):
         self.img_height = 48
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/single_1000000/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-09-13/weights.05-0.09.hdf5'
+        self.train_data_dir = '../train_data/single_1000000/'
+        self.weights_file_path = '../save_model/2016-09-13/weights.05-0.09.hdf5'
         shallow.__init__(self)
 
 
@@ -73,8 +73,8 @@ class chi_rotate(shallow):
         self.img_height = 32
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/chi_rotate_1000000/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-27/weights.981-0.32.hdf5'
+        self.train_data_dir = '../train_data/chi_rotate_1000000/'
+        self.weights_file_path = '../save_model/2016-10-27/weights.981-0.32.hdf5'
         shallow.__init__(self)
 
 
@@ -84,8 +84,8 @@ class nacao(shallow):
         self.img_height = 50
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/nacao_captcha1/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-11-28/weights.58-0.01.hdf5'
+        self.train_data_dir = '../train_data/nacao_captcha1/'
+        self.weights_file_path = '../save_model/2016-11-28/weights.58-0.01.hdf5'
         shallow.__init__(self)
 
 
@@ -95,8 +95,8 @@ class jiangxi(shallow):
         self.img_height = 32
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/jiangxi_train/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.01-0.00.hdf5'
+        self.train_data_dir = '../train_data/jiangxi_train/'
+        self.weights_file_path = '../save_model/2016-10-12/weights.01-0.00.hdf5'
         shallow.__init__(self)
 
 
@@ -106,8 +106,8 @@ class kanzhun(shallow):
         self.img_height = 50
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/kanzhun_1000/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-24/weights.44-0.91.hdf5'
+        self.train_data_dir = '../train_data/kanzhun_1000/'
+        self.weights_file_path = '../save_model/2016-10-24/weights.44-0.91.hdf5'
         shallow.__init__(self)
 
 
@@ -117,8 +117,8 @@ class lagou(shallow):
         self.img_height = 42
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/lagou_train/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-27/weights.25-0.27.hdf5'
+        self.train_data_dir = '../train_data/lagou_train/'
+        self.weights_file_path = '../save_model/2016-10-27/weights.25-0.27.hdf5'
         shallow.__init__(self)
 
 
@@ -128,8 +128,8 @@ class shanghai(shallow):
         self.img_height = 53
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/shanghai/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.33-0.01.hdf5'
+        self.train_data_dir = '../train_data/shanghai/'
+        self.weights_file_path = '../save_model/2016-10-12/weights.33-0.01.hdf5'
         shallow.__init__(self)
 
 
@@ -139,8 +139,8 @@ class hunan(shallow):
         self.img_height = 53
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/hunan_captcha/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-11-09/weights.11-0.01.hdf5'
+        self.train_data_dir = '../train_data/hunan_captcha/'
+        self.weights_file_path = '../save_model/2016-11-09/weights.11-0.01.hdf5'
         shallow.__init__(self)
 
 
@@ -150,8 +150,8 @@ class shandong(shallow):
         self.img_height = 50
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/shandong_train/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-12/weights.29-0.02.hdf5'
+        self.train_data_dir = '../train_data/shandong_train/'
+        self.weights_file_path = '../save_model/2016-10-12/weights.29-0.02.hdf5'
         shallow.__init__(self)
 
 
@@ -161,8 +161,8 @@ class guizhou(vgg_merge):
         self.img_height = 40
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/guizhou_res/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-30/weights.137-0.12.hdf5'
+        self.train_data_dir = '../train_data/guizhou_res/'
+        self.weights_file_path = '../save_model/2016-08-30/weights.137-0.12.hdf5'
         vgg_merge.__init__(self)
 
 
@@ -172,8 +172,8 @@ class zhejiang(cnn_lstm):
         self.img_height = 50
         self.img_channels = 1
         self.post_correction = True
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/zhejiang_real/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-24/weights.99-1.44.hdf5'
+        self.train_data_dir = '../train_data/zhejiang_real/'
+        self.weights_file_path = '../save_model/2016-08-24/weights.99-1.44.hdf5'
         cnn_lstm.__init__(self)   
 
 
@@ -183,8 +183,8 @@ class jiangsu(cnn_lstm):
         self.img_height = 60
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/jiangsu/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-01/weights.491-0.47.hdf5'
+        self.train_data_dir = '../train_data/jiangsu/'
+        self.weights_file_path = '../save_model/2016-08-01/weights.491-0.47.hdf5'
         cnn_lstm.__init__(self)        
 
 
@@ -194,8 +194,8 @@ class beijing(cnn_lstm):
         self.img_height = 50
         self.img_channels = 3
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/beijing/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-07-22/weights.66-0.00.hdf5'
+        self.train_data_dir = '../train_data/beijing/'
+        self.weights_file_path = '../save_model/2016-07-22/weights.66-0.00.hdf5'
         cnn_lstm.__init__(self)
 
 
@@ -205,8 +205,8 @@ class guangdong(cnn_lstm):
         self.img_height = 40
         self.img_channels = 1
         self.post_correction = True
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/guangdong/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-01/weights.09-0.03.hdf5'
+        self.train_data_dir = '../train_data/guangdong/'
+        self.weights_file_path = '../save_model/2016-08-01/weights.09-0.03.hdf5'
         cnn_lstm.__init__(self)
 
 
@@ -216,8 +216,8 @@ class hubei(cnn_lstm):
         self.img_height = 40
         self.img_channels = 1
         self.post_correction = False
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/hubei/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-08-11/weights.32-0.00.hdf5'
+        self.train_data_dir = '../train_data/hubei/'
+        self.weights_file_path = '../save_model/2016-08-11/weights.32-0.00.hdf5'
         cnn_lstm.__init__(self)
 
 
@@ -227,9 +227,6 @@ class anhui(cnn_lstm):
         self.img_height = 50
         self.img_channels = 1
         self.post_correction = True
-        self.train_data_dir = '/home/feixingjian/DeepLearning-OCR/train_data/anhui/'
-        self.weights_file_path = '/home/feixingjian/DeepLearning-OCR/save_model/2016-10-09/weights.15-0.08.hdf5'
+        self.train_data_dir = '../train_data/anhui/'
+        self.weights_file_path = '../save_model/2016-10-09/weights.15-0.08.hdf5'
         cnn_lstm.__init__(self)
-
-
-    
