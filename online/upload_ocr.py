@@ -1,14 +1,12 @@
 from flask import Flask, request, render_template, make_response
 from ocr import predict
-from models import chi_single, single_cha
+from models import single_cha
 
 app = Flask(__name__)
-# chi_single_model = chi_single()
 single_cha_model = single_cha()
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-	# global chi_single_model
 	global single_cha_model
 	if request.method == 'POST':
 		if 'province' in request.form:

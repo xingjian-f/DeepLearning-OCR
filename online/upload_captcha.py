@@ -75,8 +75,6 @@ def index():
 			res = predict(zhejiang_model, imgs, pinyin)
 		elif province == 'jiangsu':
 			res = predict(jiangsu_model, imgs)
-		elif province == 'nacao':
-			res = 'Please use port:5002'
 		elif province == 'beijing':
 			res = predict(beijing_model, imgs)
 		elif province == 'hubei':

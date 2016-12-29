@@ -1,6 +1,6 @@
 # coding:utf-8
 import sys
-sys.path.append('/home/feixingjian/DeepLearning-OCR/')
+sys.path.append('../')
 import json
 import numpy as np
 from StringIO import StringIO

@@ -1,6 +1,6 @@
 # coding:utf-8
 import sys
-sys.path.append('/home/feixingjian/DeepLearning-OCR/')
+sys.path.append('../')
 from architecture.CNN_LSTM import build_CNN_LSTM
 from architecture.vgg_merge import build_vgg_merge
 from architecture.shallow import build_shallow
