@@ -89,6 +89,17 @@ class nacao(shallow):
         shallow.__init__(self)
 
 
+class ip(shallow):
+    def __init__(self):
+        self.img_width = 200
+        self.img_height = 60
+        self.img_channels = 1
+        self.post_correction = False
+        self.train_data_dir = '../train_data/ip_train/'
+        self.weights_file_path = '../save_model/2017-01-06/weights.151-0.04.hdf5'
+        shallow.__init__(self)
+
+
 class jiangxi(shallow):
     def __init__(self):
         self.img_width = 150

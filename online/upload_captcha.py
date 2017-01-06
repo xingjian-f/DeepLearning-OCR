@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, make_response
 from captcha_new import predict
 from models import beijing, guangdong, jiangsu, hubei, zhejiang, guizhou, anhui
 from models import jiangxi, shanghai, shandong, kanzhun, lagou, chi_rotate, hunan
-from models import nacao
+from models import nacao, ip
 
 
 app = Flask(__name__)
@@ -40,17 +40,22 @@ hunan_model = hunan()
 print 'Model loaded 14.............................................................'
 nacao_model = nacao()
 print 'Model loaded 15.............................................................'
+ip_model = ip()
+print 'Model loaded 16.............................................................'
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
 	global guangdong_model, beijing_model, jiangsu_model, hubei_model, lagou_model
 	global zhejiang_model, guizhou_model, anhui_model, jiangxi_model, kanzhun_model
-	global liepin_model, hunan_model, nacao_model
+	global liepin_model, hunan_model, nacao_model, ip_model
 	if request.method == 'POST':
 		imgs = request.files.to_dict()
 		province = request.form['province']
 		if province == 'guangdong':
 			res = predict(guangdong_model, imgs)
+		elif province == 'ip':
+			res = predict(ip_model, imgs)
 		elif province == 'nacao':
 			res = predict(nacao_model, imgs)
 		elif province == 'hunan':
